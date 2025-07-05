@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Secret Wadanohara</title>
+    <style>
+      body {
+        background-image: url('/assets/w.png');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        color: #ffffff;
+        font-family: "Courier New", monospace;
+        padding: 20px;
+        text-align: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .fade-in {
+        opacity: 0;
+        animation: fadeIn 2s forwards;
+        animation-delay: var(--delay);
+      }
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+      .image {
+        max-width: 400px;
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      /* Hover solo para la imagen del botón (Wadanohara entregando carta) */
+      .image[src*="I-.png"]:hover {
+        content: url('/assets/I-2.png');
+      }
+      .button-img {
+        width: 100px;
+        cursor: pointer;
+        margin: 10px;
+      }
+      .next {
+        margin-top: 20px;
+        color: #7ecfff;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      #options,
+      #final,
+      #extra {
+        display: none;
+      }
+      iframe.audio {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- MÚSICA -->
+    <iframe
+      id="music-player"
+      class="audio"
+      src="https://www.youtube.com/embed/k-8J4pMkcBU?enablejsapi=1&loop=1&playlist=k-8J4pMkcBU&mute=0"
+      allow="autoplay; encrypted-media"
+    ></iframe>
+
+    <!-- INICIO -->
+    <img src="/assets/fondo.jpg" alt="Wadanohara triste" class="image" />
+    <p class="fade-in" style="--delay: 0s">
+      Oh... no me di cuenta que estabas aquí, Xiam...
+    </p>
+    <p class="fade-in" style="--delay: 2s">
+      ¿Cómo sé tu nombre? Es muy fácil...
+    </p>
+    <p class="fade-in" style="--delay: 4s">
+      He leído una carta para ti y he visto muchas cosas fascinantes.
+    </p>
+    <p class="fade-in" style="--delay: 6s">Te la daré...</p>
+
+    <!-- BOTÓN CARTA -->
+    <div id="letterBtn">
+      <button onclick="openLetter()">
+        <img src="/assets/I-.png" alt="Wadanohara entregando carta" class="image" />
+      </button>
+    </div>
+
+    <!-- OPCIONES -->
+    <div id="options">
+      <p>
+        Hola, soy <strong>Nato del Reino Tosatsu</strong>, y esta carta es para
+        <strong>Xiam, la brujita del mar</strong>...
+      </p>
+      <p>
+        Te daré dos opciones, y puedes elegir... cuidado, ambas tienen algo
+        especial para ti.
+      </p>
+
+      <div>
+        <img
+          src="/assets/file_000000007f6861fd873115d4b6b8c9b2.png"
+          class="button-img"
+          title="Algo que te regalaría"
+          onclick="choose('gift')"
+        />
+        <img
+          src="/assets/file_000000007f6861fd873115d4b6b8c9b2.png"
+          class="button-img"
+          style="filter: hue-rotate(200deg)"
+          title="Dónde te llevaría"
+          onclick="choose('trip')"
+        />
+      </div>
+    </div>
+
+    <!-- RESPUESTA -->
+    <div id="final">
+      <p id="message"></p>
+      <div class="next" onclick="showExtra()">→ Continuar leyendo</div>
+    </div>
+
+    <!-- MENSAJE FINAL -->
+    <div id="extra">
+      <p>
+        ¡Feliz cumpleaños, Xiam! Te amo muchísimo, eres mi persona favorita en
+        todo el mar. 🐚💙<br /><br />
+        Espérame el día 10... ahí tendrás tu regalo hermoso, tan hermoso que
+        necesitarás otro par de ojos para verlo.<br /><br />
+        Tienes un admirador secreto en el reino de los Lingangulis pelados y ese
+        admirador soy yo... ¡NATO!<br />
+        Ahh... si me olvidaba: Te amo, mi brujita linda.
+      </p>
+    </div>
+
+    <script>
+      // Cargar YouTube API
+      function loadYouTubeAPI() {
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      }
+
+      let player;
+
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player("music-player", {
+          events: {
+            onReady: onPlayerReady,
+            onStateChange: onPlayerStateChange,
+          },
+        });
+      }
+
+      function onPlayerReady(event) {
+        // Intentar reproducir inmediatamente cuando el player esté listo
+        setTimeout(() => {
+          try {
+            player.playVideo();
+          } catch (e) {
+            console.log("Autoplay bloqueado, esperando interacción");
+          }
+        }, 500);
+      }
+
+      function onPlayerStateChange(event) {
+        // Si se pausa, intentar reproducir de nuevo
+        if (event.data === YT.PlayerState.PAUSED) {
+          setTimeout(() => {
+            try {
+              player.playVideo();
+            } catch (e) {
+              // Silenciar error
+            }
+          }, 1000);
+        }
+      }
+
+      // Intentar reproducir en cualquier interacción del usuario
+      document.addEventListener("click", function() {
+        if (player && player.playVideo) {
+          try {
+            player.playVideo();
+          } catch (e) {
+            // Silenciar error
+          }
+        }
+      }, { once: false });
+
+      // Event listeners para detectar cuando el usuario "entra" a la página
+      document.addEventListener("mouseenter", function() {
+        if (player && player.playVideo) {
+          try {
+            player.playVideo();
+          } catch (e) {
+            // Silenciar error
+          }
+        }
+      }, { once: false });
+
+      document.addEventListener("focus", function() {
+        if (player && player.playVideo) {
+          try {
+            player.playVideo();
+          } catch (e) {
+            // Silenciar error
+          }
+        }
+      }, { once: false });
+
+      // Cuando la ventana se vuelve visible (usuario regresa a la pestaña)
+      document.addEventListener("visibilitychange", function() {
+        if (!document.hidden && player && player.playVideo) {
+          try {
+            player.playVideo();
+          } catch (e) {
+            // Silenciar error
+          }
+        }
+      });
+
+      // Cuando la ventana se enfoca
+      window.addEventListener("focus", function() {
+        if (player && player.playVideo) {
+          try {
+            player.playVideo();
+          } catch (e) {
+            // Silenciar error
+          }
+        }
+      }, { once: false });
+
+      function openLetter() {
+        document.getElementById("letterBtn").style.display = "none";
+        document.getElementById("options").style.display = "block";
+
+        // Intentar reproducir música cuando se abre la carta
+        if (player && player.playVideo) {
+          try {
+            player.playVideo();
+          } catch (e) {
+            // Silenciar error
+          }
+        }
+      }
+
+      function choose(option) {
+        document.getElementById("options").style.display = "none";
+        document.getElementById("final").style.display = "block";
+        let msg = "";
+        if (option === "gift") {
+          msg =
+            "Te daría un gran beso para empezar y un hermoso pastel hecho a mano por mí. También pasaría el día contigo haciendo muchas cosas lindas.";
+        } else {
+          msg =
+            "Te llevaría a una cevichería muy linda y rica de tu país, también cara obviamente. Te llevaría a comer waffles de esos que tú amas. Iríamos a un mercadito juntos a comprarte besos de moza como tus besitos.";
+        }
+        document.getElementById("message").innerText = msg;
+      }
+
+      function showExtra() {
+        document.getElementById("final").style.display = "none";
+        document.getElementById("extra").style.display = "block";
+      }
+
+      
+      loadYouTubeAPI();
+    </script>
+  </body>
+</html>

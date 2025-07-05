@@ -1,0 +1,25 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de desarrollo
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de versionado
+.git/
+.gitignore
+
+# Archivos de Docker
+Dockerfile
+.dockerignore
+
+# Archivos de documentación
+README.md
+*.md
+
+# Archivos temporales
+*.tmp
+*.temp 
